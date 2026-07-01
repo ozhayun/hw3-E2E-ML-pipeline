@@ -211,12 +211,12 @@ def log_mlflow_run(run_config: dict, metrics: dict, run_dir: Path) -> str:
         ),
         "run_id": Param(
             "",
-            type="string",
+            type=["string", "null"],
             description="Custom run ID. Auto-generated (run-YYYYMMDD-HHMMSS-xxxxxx) if empty.",
         ),
         "cost_limit": Param(
             "",
-            type="string",
+            type=["string", "null"],
             description="Max cost per task in USD. Empty = no limit.",
         ),
     },
