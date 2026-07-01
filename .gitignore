@@ -10,3 +10,12 @@ __pycache__
 
 mini-swe-agent/
 SWE-bench/
+
+# Ignore all runs except the committed sample
+/runs/run-*/
+/runs/*/run-agent/trajectories/**/
+!/runs/sample-run-001/
+
+# Airflow metadata
+airflow/
+~/airflow/

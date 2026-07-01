@@ -1,0 +1,10 @@
+{
+  "run_id": "sample-run-001",
+  "split": "test",
+  "subset": "verified",
+  "workers": 5,
+  "model": "nebius/moonshotai/Kimi-K2.6",
+  "task_slice": "0:3",
+  "cost_limit": null,
+  "created_at": "2025-07-01T10:00:00Z"
+}

@@ -1,0 +1,121 @@
+---
+# docker-compose.yaml
+# Deploys Airflow (LocalExecutor + PostgreSQL) and MLflow tracking server.
+# Usage:
+#   cp .env.example .env   # fill in NEBIUS_API_KEY and other secrets
+#   docker compose up -d
+#   open http://localhost:8080   # Airflow  (admin / admin)
+#   open http://localhost:5000   # MLflow
+
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.9.3-python3.12
+  environment: &airflow-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__FERNET_KEY: ""
+    AIRFLOW__WEBSERVER__SECRET_KEY: "changeme-in-production"
+    AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+    # MLflow endpoint reachable from inside Docker network
+    MLFLOW_TRACKING_URI: http://mlflow:5000
+    # Nebius / OpenAI-compatible inference key
+    NEBIUS_API_KEY: ${NEBIUS_API_KEY}
+    MSWEA_COST_TRACKING: ignore_errors
+    # S3 / Object Storage (optional – leave blank to skip upload)
+    S3_BUCKET: ${S3_BUCKET:-}
+    AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+    AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-}
+    AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./scripts:/opt/airflow/scripts
+    - ./runs:/opt/airflow/runs
+    - ./pyproject.toml:/opt/airflow/pyproject.toml
+    - airflow-logs:/opt/airflow/logs
+    # Mount Docker socket to allow DockerOperator
+    - /var/run/docker.sock:/var/run/docker.sock
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  # ── Metadata database ─────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+
+  # ── Airflow init (runs once) ──────────────────────────────────────────────
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate
+        airflow users create \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com
+    restart: "no"
+
+  # ── Airflow webserver ─────────────────────────────────────────────────────
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  # ── Airflow scheduler ─────────────────────────────────────────────────────
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  # ── MLflow tracking server ────────────────────────────────────────────────
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.14.0
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:///mlflow/mlflow.db
+      --default-artifact-root /mlflow/artifacts
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow-data:/mlflow
+    restart: always
+
+volumes:
+  postgres-db:
+  airflow-logs:
+  mlflow-data:
