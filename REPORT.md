@@ -1,5 +1,13 @@
 # REPORT: End-to-End ML Pipeline Assignment
 
+## Screenshots
+
+**Airflow DAG — completed run:**
+![Airflow DAG success](screenshots/Airflow%20DAG%20success.png)
+
+**MLflow — logged run with metrics:**
+![MLflow run](screenshots/MLflow.png)
+
 ## Architecture
 
 The pipeline converts ad-hoc coding-agent evaluation scripts into a configurable,
