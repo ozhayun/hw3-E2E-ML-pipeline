@@ -73,9 +73,8 @@ uv sync
 cp .env.example .env
 # Set NEBIUS_API_KEY in .env
 
-# 3. Start Airflow
-source .venv/bin/activate
-bash run-airflow-standalone.sh
+# 3. Start Airflow (must activate venv first — Airflow needs mlflow from the venv)
+source .venv/bin/activate && bash run-airflow-standalone.sh
 
 # 4. Open http://localhost:8080 (admin / admin)
 #    Navigate to DAGs → evaluate_agent → Trigger DAG w/ config
@@ -188,23 +187,43 @@ To compare runs: open MLflow UI → Experiments → evaluate-agent → select ru
 
 ---
 
-## Sample Completed Run
+## Completed Run
 
-A sample run (`sample-run-001`) is included under `runs/sample-run-001/`. It used
-`task_slice=0:3` on `verified/test` with `nebius/moonshotai/Kimi-K2.6`:
+A real end-to-end run (`run-20260701-085656-f474b0`) is committed under
+`runs/run-20260701-085656-f474b0/`. It was triggered via the Airflow UI on a
+Nebius VM (8 vCPU, 32 GiB RAM, Ubuntu 24.04) and completed in ~9 minutes.
 
+**Config:**
 ```json
 {
-  "resolved_instances": 1,
-  "submitted_instances": 3,
-  "total_instances": 500,
-  "resolve_rate": 0.3333
+  "run_id": "run-20260701-085656-f474b0",
+  "split": "test",
+  "subset": "verified",
+  "workers": 5,
+  "model": "nebius/moonshotai/Kimi-K2.6",
+  "task_slice": "0:3"
 }
 ```
 
-Trajectories and eval logs are in `runs/sample-run-001/run-agent/` and
-`runs/sample-run-001/run-eval/` respectively. The full sample data in `sample/`
-was produced by the upstream scripts.
+**Metrics:**
+```json
+{
+  "resolved_instances": 2,
+  "submitted_instances": 3,
+  "total_instances": 500,
+  "resolve_rate": 0.6667,
+  "error_instances": 0,
+  "empty_patch_instances": 0
+}
+```
+
+The run directory contains full agent trajectories (`.traj.json`), predictions
+(`preds.json`), SWE-bench evaluation logs, per-instance reports, and a
+`manifest.json` linking all artifacts. The same run is logged in MLflow under
+the `evaluate-agent` experiment (MLflow run ID: `b6b8a335d09f44e2a6120309c77f91ed`).
+
+A reference sample run (`sample-run-001`) with data from the upstream scripts is
+also included for comparison.
 
 ---
 
