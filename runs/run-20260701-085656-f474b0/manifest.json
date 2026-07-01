@@ -1,0 +1,14 @@
+{
+  "run_id": "run-20260701-085656-f474b0",
+  "created_at": "2026-07-01T08:56:56.227442Z",
+  "files": {
+    "config": "config.json",
+    "predictions": "run-agent/preds.json",
+    "trajectories": "run-agent/trajectories/",
+    "eval_logs": "run-eval/",
+    "metrics": "metrics.json",
+    "manifest": "manifest.json"
+  },
+  "mlflow_experiment": "evaluate-agent",
+  "mlflow_run_id": "b6b8a335d09f44e2a6120309c77f91ed"
+}

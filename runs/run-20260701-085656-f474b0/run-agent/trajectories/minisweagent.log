@@ -1,0 +1,13 @@
+2026-07-01 08:56:58,010 - minisweagent - INFO - Loading dataset princeton-nlp/SWE-Bench_Verified, split test...
+2026-07-01 08:57:00,678 - minisweagent - INFO - Instance slice: 500 -> 3 instances
+2026-07-01 08:57:00,679 - minisweagent - INFO - Running on 3 instances...
+2026-07-01 08:57:00,680 - minisweagent - INFO - Building agent config from specs: ['/home/ozhayun/hw3-E2E-ML-pipeline/.venv/lib/python3.12/site-packages/minisweagent/config/benchmarks/swebench.yaml']
+2026-07-01 08:57:02,333 - minisweagent.environment - DEBUG - Starting container with command: docker run -d --name minisweagent-912a6b98 -w /testbed --rm docker.io/swebench/sweb.eval.x86_64.astropy_1776_astropy-13033:latest sleep 2h
+2026-07-01 08:57:02,334 - minisweagent.environment - DEBUG - Starting container with command: docker run -d --name minisweagent-b7def7d6 -w /testbed --rm docker.io/swebench/sweb.eval.x86_64.astropy_1776_astropy-12907:latest sleep 2h
+2026-07-01 08:57:02,335 - minisweagent.environment - DEBUG - Starting container with command: docker run -d --name minisweagent-d918dddf -w /testbed --rm docker.io/swebench/sweb.eval.x86_64.astropy_1776_astropy-13236:latest sleep 2h
+2026-07-01 08:57:58,185 - minisweagent.environment - INFO - Started container minisweagent-b7def7d6 with ID 86724d87283bed183843e9c3d01531f9392ae8b0394a21522b8aaa18b8744cda
+2026-07-01 08:57:58,214 - minisweagent.environment - INFO - Started container minisweagent-d918dddf with ID 7a849ae747c6009e9412c86f9493685a246dff827c94cf27bcd1827682565f24
+2026-07-01 08:57:58,222 - minisweagent.environment - INFO - Started container minisweagent-912a6b98 with ID dea1019054603f3a1b63733a0642ba41aadfd4ea7c0eef84e1873018ff0215e8
+2026-07-01 08:59:58,041 - minisweagent - INFO - Saved trajectory to '/home/ozhayun/hw3-E2E-ML-pipeline/runs/run-20260701-085656-f474b0/run-agent/trajectories/astropy__astropy-12907/astropy__astropy-12907.traj.json'
+2026-07-01 09:00:35,289 - minisweagent - INFO - Saved trajectory to '/home/ozhayun/hw3-E2E-ML-pipeline/runs/run-20260701-085656-f474b0/run-agent/trajectories/astropy__astropy-13236/astropy__astropy-13236.traj.json'
+2026-07-01 09:04:38,481 - minisweagent - INFO - Saved trajectory to '/home/ozhayun/hw3-E2E-ML-pipeline/runs/run-20260701-085656-f474b0/run-agent/trajectories/astropy__astropy-13033/astropy__astropy-13033.traj.json'
