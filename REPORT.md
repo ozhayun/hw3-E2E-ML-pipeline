@@ -1,5 +1,7 @@
 # REPORT: End-to-End ML Pipeline Assignment
 
+**Submitted by:** Oz Hayun and Ron Haikin
+
 ## Screenshots
 
 **Airflow DAG — completed run:**
